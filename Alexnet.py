@@ -52,7 +52,7 @@ class AlexNet(nn.Module):
         # 修改此处的Linear层输入大小为 256 * 3 * 3 = 2304
         self.classifier = nn.Sequential(
             nn.Dropout(),
-            nn.Linear(256 * 3 * 3, 4096),  # 修改这里
+            nn.Linear(256 * 3 * 3, 4096), 
             nn.ReLU(inplace=True),
             nn.Dropout(),
             nn.Linear(4096, 4096),
@@ -70,10 +70,10 @@ class AlexNet(nn.Module):
 # 初始化模型、损失函数和优化器
 model = AlexNet(num_classes=3)
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.0005)
 
 # 设置训练参数
-num_epochs = 50
+num_epochs = 20
 
 def train_model(model, train_loader, criterion, optimizer, num_epochs):
     model.train()
