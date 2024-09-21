@@ -2,46 +2,54 @@ import os
 import shutil
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 
-# 设置图像数据的转换
+# 预处理步骤要和训练时的一致
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),  # 调整图像大小
-    transforms.ToTensor(),  # 转换为Tensor
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # 归一化
+    transforms.Resize((128, 128)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
 ])
 
-class SimpleCNN(nn.Module):
-    def __init__(self):
-        super(SimpleCNN, self).__init__()
-        # First conv layer: input channels = 3, output channels = 32
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)
-        # Second conv layer: input channels = 32, output channels = 64
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
-        # Max pooling layer
-        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
-        # Fully connected layers
-        self.fc1 = nn.Linear(64 * 32 * 32, 128)
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, 3)
-        # Dropout layer
-        self.dropout = nn.Dropout(0.05)
+# 定义模型结构（与训练时一致）
+class AlexNet(nn.Module):
+    def __init__(self, num_classes=3):
+        super(AlexNet, self).__init__()
+        self.features = nn.Sequential(
+            nn.Conv2d(3, 64, kernel_size=11, stride=4, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.Conv2d(64, 192, kernel_size=5, padding=2),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2),
+            nn.Conv2d(192, 384, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(384, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(256, 256, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True),
+            nn.MaxPool2d(kernel_size=3, stride=2)
+        )
+        self.classifier = nn.Sequential(
+            nn.Dropout(),
+            nn.Linear(256 * 3 * 3, 4096),  # 输入维度需要保持一致
+            nn.ReLU(inplace=True),
+            nn.Dropout(),
+            nn.Linear(4096, 4096),
+            nn.ReLU(inplace=True),
+            nn.Linear(4096, num_classes)
+        )
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))  # Conv -> ReLU -> Pool
-        x = self.pool(F.relu(self.conv2(x)))  # Conv -> ReLU -> Pool
-        x = x.view(-1, 64 * 32 * 32)           # Flatten
-        x = F.relu(self.fc1(x))               # Fully connected -> ReLU
-        x = F.relu(self.fc2(x))               # Fully connected -> ReLU
-        x = self.dropout(x)                   # Apply Dropout
-        x = self.fc3(x)                       # Output layer
+        x = self.features(x)
+        x = x.view(x.size(0), -1)  # 动态展平
+        x = self.classifier(x)
         return x
 
 # 加载已经训练好的模型
-model = SimpleCNN()
-model.load_state_dict(torch.load('/Users/luhaoran/Interpretative-model-VIT-based-on-Medical-Image/Preprocessing/model_simpleCNN.pth'))  # 替换为你实际的模型路径
+model = AlexNet()
+model.load_state_dict(torch.load('/Users/han/Desktop/解释性模型/model_alexnet.pth'))  # 替换为实际模型路径
 model.eval()  # 切换为评估模式
 
 # 创建分类文件夹
@@ -71,5 +79,5 @@ def classify_and_copy_images(model, image_folder, output_dirs, transform):
             print(f"Copied {filename} to {class_name}")
 
 # 调用分类和复制函数
-image_folder = '/Users/luhaoran/Machine Learning/peoject_part2'  # 替换为你的图片目录
+image_folder = '/Users/han/Desktop/解释性模型/project_part2'  # 替换为你的图片目录
 classify_and_copy_images(model, image_folder, output_dirs, transform)
