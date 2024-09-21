@@ -6,37 +6,42 @@ import torch.nn.functional as F
 from torchvision import transforms
 from PIL import Image
 
-# 预处理步骤要和训练时的一致
+# 设置图像数据的转换
 transform = transforms.Compose([
-    transforms.Resize((128, 128)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+    transforms.Resize((128, 128)),  # 调整图像大小
+    transforms.ToTensor(),  # 转换为Tensor
+    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])  # 归一化
 ])
 
-# 定义模型结构（和训练时的一致）
-class CNNClassifier(nn.Module):
+class SimpleCNN(nn.Module):
     def __init__(self):
-        super(CNNClassifier, self).__init__()
-        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1)
-        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1)
-        self.pool = nn.MaxPool2d(2, 2)
+        super(SimpleCNN, self).__init__()
+        # First conv layer: input channels = 3, output channels = 32
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=3, padding=1)
+        # Second conv layer: input channels = 32, output channels = 64
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        # Max pooling layer
+        self.pool = nn.MaxPool2d(kernel_size=2, stride=2)
+        # Fully connected layers
         self.fc1 = nn.Linear(64 * 32 * 32, 128)
-        self.fc2 = nn.Linear(128, 3)  # 输出3个类别
-        self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.5)
+        self.fc2 = nn.Linear(128, 128)
+        self.fc3 = nn.Linear(128, 3)
+        # Dropout layer
+        self.dropout = nn.Dropout(0.05)
 
     def forward(self, x):
-        x = self.pool(self.relu(self.conv1(x)))
-        x = self.pool(self.relu(self.conv2(x)))
-        x = x.view(-1, 64 * 32 * 32)  # 展平
-        x = self.relu(self.fc1(x))
-        x = self.dropout(x)
-        x = self.fc2(x)
+        x = self.pool(F.relu(self.conv1(x)))  # Conv -> ReLU -> Pool
+        x = self.pool(F.relu(self.conv2(x)))  # Conv -> ReLU -> Pool
+        x = x.view(-1, 64 * 32 * 32)           # Flatten
+        x = F.relu(self.fc1(x))               # Fully connected -> ReLU
+        x = F.relu(self.fc2(x))               # Fully connected -> ReLU
+        x = self.dropout(x)                   # Apply Dropout
+        x = self.fc3(x)                       # Output layer
         return x
 
 # 加载已经训练好的模型
-model = CNNClassifier()
-model.load_state_dict(torch.load('/Users/luhaoran/Machine Learning/model.pth'))  # 替换为你实际的模型路径
+model = SimpleCNN()
+model.load_state_dict(torch.load('/Users/luhaoran/Interpretative-model-VIT-based-on-Medical-Image/Preprocessing/model_simpleCNN.pth'))  # 替换为你实际的模型路径
 model.eval()  # 切换为评估模式
 
 # 创建分类文件夹
