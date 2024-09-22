@@ -4,6 +4,8 @@ import math
 from torch.optim import lr_scheduler
 from VIT import ViT
 from load_data import CIFAR10DataLoader  # 引入你写的CIFAR10DataLoader类
+from utils import train_epoch
+from utils import evaluate
 
 # 超参数设置
 batch_size = 64
