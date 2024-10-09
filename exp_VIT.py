@@ -9,7 +9,7 @@ from utils import evaluate
 
 # 超参数设置
 batch_size = 32
-image_size = (224, 224)
+image_size = (128, 128)
 learning_rate = 0.01
 epoch_num = 50
 num_classes = 10
