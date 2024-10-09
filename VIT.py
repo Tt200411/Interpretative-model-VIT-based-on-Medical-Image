@@ -163,10 +163,10 @@ class Block(nn.Module):
 
 class ViT(nn.Module):
     def __init__(self, 
-                 img_size=224, 
-                 patch_size=16, 
+                 img_size=128, 
+                 patch_size=32, 
                  in_c=3, 
-                 num_classes=1000,
+                 num_classes=10,
                  embed_dim=768, 
                  depth=12, 
                  num_heads=12, 
