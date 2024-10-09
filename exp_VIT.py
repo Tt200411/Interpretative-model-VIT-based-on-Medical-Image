@@ -3,12 +3,12 @@ import torch.optim as optim
 import math
 from torch.optim import lr_scheduler
 from VIT import ViT
-from load_data import CIFAR10DataLoader  # 引入你写的CIFAR10DataLoader类
+from load_data import CIFAR10DataLoader 
 from utils import train_epoch
 from utils import evaluate
 
 # 超参数设置
-batch_size = 64
+batch_size = 32
 image_size = (224, 224)
 learning_rate = 0.01
 epoch_num = 50

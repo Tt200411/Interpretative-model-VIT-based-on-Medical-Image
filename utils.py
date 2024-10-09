@@ -47,28 +47,39 @@ def read_split_data(root:str,val_rate:float=0.3, plot = True):
 def train_epoch(model, optimizer, data_loader, device, epoch):
     model.train()
     loss_function = nn.CrossEntropyLoss()
-    accu_loss = torch.zeros(1).to(device) #accumulate loss
-    accu_num = torch.zeros(1).to(device) #accumulate correct predictions
+    accu_loss = torch.zeros(1).to(device)  # 累加损失
+    accu_num = torch.zeros(1).to(device)  # 累加正确预测数
     optimizer.zero_grad()
 
     sample_num = 0
-    data_loader = tqdm(data_loader,file=sys.stdout)
+    data_loader = tqdm(data_loader, file=sys.stdout)
+    
     for stp, data in enumerate(data_loader):
-        img, labels = data
+        img, labels = data  # 解包数据和标签
+        print(f"Epoch {epoch}, Step {stp}:")
+        print(f"Training data shape: {img.shape}")
+        print(f"Target shape: {labels.shape}")
+        
         sample_num += img.shape[0]
         pred = model(img.to(device))
-        pred_classes = torch.max(pred,dim=1)[1]
+        pred_classes = torch.max(pred, dim=1)[1]
         accu_num += torch.eq(pred_classes, labels.to(device)).sum()
-        loss = loss_function(pred,labels.to(device))
+        
+        loss = loss_function(pred, labels.to(device))
         loss.backward()
-        accu_loss+=loss.detach()
-        data_loader.desc = "[train epoch {}] loss: {:.3f}, acc: {:.3f}".format(epoch,
-                                                                               accu_loss.item() / (stp + 1),
-                                                                               accu_num.item() / sample_num)
+        accu_loss += loss.detach()
+        
+        data_loader.desc = "[train epoch {}] loss: {:.3f}, acc: {:.3f}".format(
+            epoch,
+            accu_loss.item() / (stp + 1),
+            accu_num.item() / sample_num
+        )
 
         optimizer.step()
         optimizer.zero_grad()
-    return accu_loss.item()/(stp+1), accu_num.item()/sample_num
+    
+    return accu_loss.item() / (stp + 1), accu_num.item() / sample_num
+
 
 @torch.no_grad()
 def evaluate(model, data_loader, device, epoch):

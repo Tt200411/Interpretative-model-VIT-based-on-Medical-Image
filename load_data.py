@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class CIFAR10DataLoader:
-    def __init__(self, batch_size=64, image_size=(128, 128)):
+    def __init__(self, batch_size=32, image_size=(128, 128)):
         # 设置图像转换
         self.transform = transforms.Compose([
             transforms.Resize(image_size),  # 调整图像大小
