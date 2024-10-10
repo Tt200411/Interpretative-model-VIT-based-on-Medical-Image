@@ -10,6 +10,13 @@ The main idea behind DropPath is to encourage the model to become more robust by
 In the context of ViT, which is a transformer-based architecture for computer vision tasks, DropPath is often applied to the transformer blocks. During training, with a certain probability, some of the transformer blocks are skipped, and their connections are dropped. This helps the model generalize better and become more robust.
 The specific implementation of DropPath may vary depending on the framework and library being used, but the concept remains consistent: randomly dropping connections or paths through the network during training to prevent overfitting.
 '''
+'''
+在视觉转换器(ViT)的上下文中，“drop_path”指的是在训练期间使用的一种正则化技术，以防止过拟合。术语“drop_path”并非特定于ViT，可用于各种深度学习模型。
+DropPath类似于dropout技术，但它不是随机丢弃单个神经元(如dropout)，而是在每次向前传递期间随机丢弃神经网络中的整个路径或连接。这些路径通常对应于模型的层或块。
+DropPath背后的主要思想是通过在训练期间将模型暴露于路径或块的不同子集来鼓励模型变得更加健壮。它可以防止模型过于依赖任何单一路径，从而降低过拟合的风险。
+在ViT(一种基于变压器的计算机视觉任务体系结构)的上下文中，DropPath经常应用于变压器块。在训练过程中，以一定的概率，一些变压器块被跳过，并且它们的连接被丢弃。这有助于模型更好地泛化并变得更健壮。
+DropPath的具体实现可能因所使用的框架和库而异，但其概念是一致的:在训练期间随机丢弃网络中的连接或路径，以防止过拟合。
+'''
 def drop_path(x, drop_prob: float = 0., training: bool = False):
     if drop_prob == 0. or not training:
         return x
