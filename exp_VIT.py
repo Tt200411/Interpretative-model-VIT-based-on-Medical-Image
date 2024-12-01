@@ -17,6 +17,10 @@ num_classes = 10
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 实例化数据加载类
+# mnist_loader = MNISTDataLoader(batch_size=32, image_size=(28, 28))
+# train_loader, test_loader = mnist_loader.load_data()
+
+# data_loader = CIFAR10DataLoader(batch_size=batch_size, image_size=image_size)
 data_loader = CIFAR10DataLoader(batch_size=batch_size, image_size=image_size)
 train_loader, val_loader = data_loader.load_data()
 
@@ -51,4 +55,6 @@ for epoch in range(epoch_num):
     train_attention_weights = []
 
     # 进行验证等其他操作
+
+
 
