@@ -1,0 +1,1 @@
+CIFAR-10 数据集已经放在了https://huggingface.co/datasets/VIT-Learner/CIFAR-10/tree/main
