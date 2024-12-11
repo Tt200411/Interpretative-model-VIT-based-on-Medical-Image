@@ -58,6 +58,7 @@ class PatchEmbedding(nn.Module):
         self.norm = norm_layer(embed_dim) if norm_layer else nn.Identity()
 
     def forward(self, x):
+        print("forword before embedding: "+ str(x.shape))
         B, C, H, W = x.shape
         assert H == self.img_size[0] and W == self.img_size[1], \
             f"Input image size ({H}*{W}) doesn't match model ({self.img_size[0]}*{self.img_size[1]})."
@@ -66,6 +67,7 @@ class PatchEmbedding(nn.Module):
         # transpose: [B, C, HW] -> [B, HW, C]
         x = self.proj(x).flatten(2).transpose(1, 2)
         x = self.norm(x)
+        print("forword after embedding: "+ str(x.shape))
         return x
     
 class MSA(nn.Module):

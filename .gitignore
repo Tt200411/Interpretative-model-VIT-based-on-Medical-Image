@@ -1,5 +1,4 @@
 data/
 /imagenet21k_R26+ViT-B_32.npz
 /Team26.pdf
-.DS_Store
-.DS_Store
+.DS_store
