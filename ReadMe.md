@@ -1,3 +1,7 @@
+Dataset and pre-trained model: https://huggingface.co/VIT-Learner
+Github: https://github.com/Tt200411/Interpretative-model-VIT-based-on-Medical-Image
+
+
 Welcome all members!
 firstly we come, you should do this things:
 1. Clone resposity
